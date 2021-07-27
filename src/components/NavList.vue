@@ -4,7 +4,7 @@
       v-for="(c, index) in listData"
       :key="index"
       class="title"
-      @click="handleClick(index)"
+      @click="handleClick(index, c)"
       :class="active === index ? 'active' : ''"
     >
       {{ index === 0 ? '全部' : c }}
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { getProInfo } from '../api/request';
+
 export default {
   props: ['listData'],
   data() {
@@ -20,9 +22,16 @@ export default {
       active: 0,
     };
   },
+  watch: {
+    listData() {
+      this.active = 0;
+    },
+  },
   methods: {
-    handleClick(index) {
+    async handleClick(index, c) {
       this.active = index;
+      const data = await getProInfo({ type: c }).then((res) => res);
+      this.$emit('data', { data, c });
     },
   },
 };

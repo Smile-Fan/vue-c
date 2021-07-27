@@ -8,7 +8,15 @@
       :thumb="imgUrl"
     >
       <template #num>
-        <span class="sale">库存 {{ info.sale }} 件</span>
+        <span class="inventory sum">库存 {{ info.inventory }} 件</span>
+        <span class="sale sum"
+          >销量
+          {{
+            info.sale >= 10000
+              ? Math.floor(info.sale / 10000) + '万+'
+              : info.sale
+          }}
+        </span>
       </template>
       <template #tags>
         <van-tag
@@ -20,11 +28,19 @@
         >
       </template>
       <template #footer>
-        <van-button size="mini" :disabled="number === 0" @click="popNum"
+        <van-button
+          size="mini"
+          round
+          :disabled="info.number === 0"
+          @click="popNum"
           >-</van-button
         >
-        {{ number }}
-        <van-button size="mini" @click="addNum" :disabled="number === info.sale"
+        {{ info.number }}
+        <van-button
+          size="mini"
+          round
+          @click="addNum"
+          :disabled="info.number === info.inventory"
           >+</van-button
         >
       </template>
@@ -33,13 +49,35 @@
 </template>
 
 <script>
+import store from '../store/index';
+
 export default {
   data() {
     return {
-      number: 0,
+      info: [],
+      numTip: null,
     };
   },
-  props: ['info'],
+  props: ['dataInfo'],
+  created() {
+    if (localStorage.getItem(this.dataInfo.id)) {
+      const data = JSON.parse(localStorage.getItem(this.dataInfo.id));
+      this.info = { ...this.dataInfo, number: data.number };
+    } else {
+      this.info = { ...this.dataInfo, number: 0 };
+    }
+  },
+  watch: {
+    dataInfo(newVal) {
+      if (localStorage.getItem(newVal.id)) {
+        const data = JSON.parse(localStorage.getItem(newVal.id));
+
+        this.info = { ...newVal, number: data.number };
+      } else {
+        this.info = { ...newVal, number: 0 };
+      }
+    },
+  },
   computed: {
     imgUrl() {
       return this.info.images[0];
@@ -47,12 +85,30 @@ export default {
   },
   methods: {
     addNum() {
-      this.number += 1;
+      this.info.number += 1;
       this.$store.commit('add');
+      if (localStorage.getItem('sum')) { localStorage.setItem('sum', store.state.shoppingNum); }
+      const data = JSON.stringify({ ...this.info, number: this.info.number });
+      localStorage.setItem(this.info.id, data);
+      this.$store.commit('addList', this.info.id);
+      localStorage.setItem('list', JSON.stringify(store.state.shoppingList));
+      localStorage.setItem('sum', store.state.shoppingNum);
+      this.$bus.$emit('handelRefresh');
     },
     popNum() {
-      this.number -= 1;
+      this.info.number -= 1;
       this.$store.commit('pop');
+      localStorage.setItem('sum', store.state.shoppingNum);
+      if (this.info.number === 0) {
+        localStorage.removeItem(this.info.id);
+        this.$store.commit('removeList', this.info.id);
+        localStorage.setItem('list', JSON.stringify(store.state.shoppingList));
+      } else {
+        const data = JSON.stringify({ ...this.info, number: this.info.number });
+        localStorage.setItem(this.info.id, data);
+      }
+      this.$bus.$emit('handelRefresh');
+      this.$bus.$emit('refreshBuy');
     },
   },
 };
@@ -62,8 +118,9 @@ export default {
 .card-content {
   box-sizing: border-box;
   margin: 2px 0px;
-  .sale {
+  .sum {
     font-size: 8px;
+    margin-left: 5px;
   }
 }
 </style>

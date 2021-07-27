@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import store from '../store/index';
 
 export default {
   data() {
     return {
+      num: 0,
       list: [
         {
           name: '首页', icon: 'home-o', badge: '', router: '/',
@@ -35,9 +35,20 @@ export default {
       ],
     };
   },
+  created() {
+    if (localStorage.getItem('sum')) {
+      this.$store.commit('add', localStorage.getItem('sum') * 1);
+      this.refresh();
+    }
+  },
+  mounted() {
+    this.$bus.$on('handelRefresh', this.refresh);
+  },
   computed: {
-    num() {
-      return store.state.shoppingNum;
+  },
+  methods: {
+    refresh() {
+      this.num = localStorage.getItem('sum');
     },
   },
 };

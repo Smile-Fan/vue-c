@@ -39,7 +39,7 @@ export default {
   methods: {
     async onSubmit(values) {
       const data = await login(values.email, values.password)
-        .then((res) => res);
+        .then((res) => res.data);
       if (data.status === 'success') {
         this.$store.dispatch('setUserInfo', data.data).then(() => {
           this.$router.push('/Classify');
