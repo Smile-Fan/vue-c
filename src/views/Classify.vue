@@ -85,6 +85,9 @@ export default {
   },
   methods: {
     async getMore() {
+      if (this.moreList.total !== this.prolist.length) {
+        this.more = true;
+      }
       if (this.$refs.content.scrollTop
         + this.$refs.content.offsetHeight
         >= this.$refs.content.scrollHeight - 150 && this.more && this.clock) {
@@ -95,7 +98,7 @@ export default {
         Object.keys(this.moreList.list).forEach((item) => {
           this.prolist.push(this.moreList.list[item]);
         });
-        if (this.moreList.total === this.prolist.length) {
+        if (this.moreList.list.length === 0) {
           this.more = false;
           this.size = this.prolist.length;
         } else {
@@ -113,9 +116,8 @@ export default {
     },
     fliterData(data) {
       this.prolist = [];
-      if (this.moreList.total !== this.prolist.length) {
-        this.more = true;
-      }
+
+      this.page = 1;
       this.type = data.c;
       this.prolist = data.data.list;
       if (this.prolist.length === 0) {

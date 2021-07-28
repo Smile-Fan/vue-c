@@ -18,10 +18,6 @@
           {{ c }}</van-tag
         >
       </template>
-      <!-- <template #footer>
-        <van-button size="mini">按钮</van-button>
-        <van-button size="mini">按钮</van-button>
-      </template> -->
     </van-card>
   </div>
 </template>
@@ -42,6 +38,7 @@ export default {
     } else if (this.dataInfo.price && this.selected) {
       this.$store.commit('addMoney', this.dataInfo.price * this.number);
     }
+    this.$emit('select', this.info);
   },
   computed: {
     imgUrl() {
@@ -53,6 +50,15 @@ export default {
   },
   watch: {
     selected(newVal) {
+      if (!newVal) {
+        // 不选中
+        this.$bus.$emit('popArr', this.info);
+      }
+      if (newVal) {
+        this.$emit('select', this.info);
+      } else {
+        this.$emit('select', '');
+      }
       if (!newVal) {
         if (this.dataInfo.price_off) {
           this.$store.commit('popMoney', this.dataInfo.price_off * this.number);

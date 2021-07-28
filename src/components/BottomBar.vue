@@ -36,7 +36,8 @@ export default {
     };
   },
   created() {
-    if (localStorage.getItem('sum')) {
+    console.log(localStorage.getItem('sum'));
+    if (localStorage.getItem('sum') * 1 !== 0) {
       this.$store.commit('add', localStorage.getItem('sum') * 1);
       this.refresh();
     }
