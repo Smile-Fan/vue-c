@@ -67,7 +67,7 @@ export default {
               localStorage.removeItem(this.seletedList[item].id);
             }
           });
-          window.location.reload();
+          this.list = Object.keys(JSON.parse(localStorage.getItem('list')));
         })
         .catch((err) => {
           console.log(err);

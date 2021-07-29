@@ -42,7 +42,7 @@ export default {
         .then((res) => res.data);
       if (data.status === 'success') {
         this.$store.dispatch('setUserInfo', data.data).then(() => {
-          this.$router.push('/Classify');
+          this.$router.push({ name: 'Classify' });
         }, (error) => {
           Promise.reject(error);
         });

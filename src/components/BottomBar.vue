@@ -21,22 +21,21 @@ export default {
       num: 0,
       list: [
         {
-          name: '首页', icon: 'home-o', badge: '', router: '/',
+          name: '首页', icon: 'home-o', badge: '', router: { name: 'Home' },
         },
         {
-          name: '分类', icon: 'apps-o', badge: '', router: '/Classify',
+          name: '分类', icon: 'apps-o', badge: '', router: { name: 'Classify' },
         },
         {
-          name: '购物车', icon: 'cart-o', badge: '', router: '/ShoppingCar',
+          name: '购物车', icon: 'cart-o', badge: '', router: { name: 'ShoppingCar' },
         },
         {
-          name: '我的', icon: 'user-circle-o', badge: '', router: '/MyInfo',
+          name: '我的', icon: 'user-circle-o', badge: '', router: { name: 'MyInfo' },
         },
       ],
     };
   },
   created() {
-    console.log(localStorage.getItem('sum'));
     if (localStorage.getItem('sum') * 1 !== 0) {
       this.$store.commit('add', localStorage.getItem('sum') * 1);
       this.refresh();
